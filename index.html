@@ -3,85 +3,243 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Google Drive Catalog</title>
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.0.8/css/dataTables.dataTables.min.css">
+    <title>Play V4 Beta</title>
     <style>
-        /* Basic custom styling */
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 20px; background-color: #f4f7f6; color: #333; }
-        h1 { color: #2c3e50; text-align: center; margin-bottom: 30px; }
-        #catalogTable_wrapper { /* Styles for DataTables container */
+        /* General Body and Layout */
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            margin: 0; 
+            background-color: #f4f7f6; 
+            color: #333; 
+        }
+        .container {
+            max-width: 1200px; 
+            margin: 20px auto; 
+            padding: 0 20px; 
+        }
+        h1 { 
+            color: #2c3e50; 
+            text-align: center; 
+            margin-bottom: 30px; 
+            padding-top: 20px;
+        }
+
+        /* Filter Controls */
+        .controls {
             background-color: #fff;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+            display: flex; 
+            flex-wrap: wrap; 
+            gap: 15px; 
+            align-items: center; 
         }
-        #catalogTable { 
-            width: 100%; 
-            border-collapse: collapse; 
-            margin-top: 20px; /* Space above the table itself */
+        .controls label {
+            font-weight: bold;
+            margin-right: 5px;
+            white-space: nowrap; 
         }
-        #catalogTable th, #catalogTable td { 
-            border: 1px solid #e0e0e0; 
-            padding: 12px; 
-            text-align: left; 
-        }
-        #catalogTable th { 
-            background-color: #e9ecef; 
-            font-weight: bold; 
-            color: #555;
-            cursor: pointer; /* Indicate sortable */
-        }
-        #catalogTable td a {
-            color: #007bff;
-            text-decoration: none;
-        }
-        #catalogTable td a:hover {
-            text-decoration: underline;
-        }
-        /* DataTables search input and pagination styling */
-        .dataTables_filter input { 
-            padding: 8px 12px; 
-            margin-left: 8px; 
-            border: 1px solid #ccc; 
-            border-radius: 4px; 
-            width: 250px; /* Adjust width */
-        }
-        .dataTables_paginate .paginate_button {
-            padding: 6px 12px;
-            margin: 0 4px;
+        .controls input[type="search"],
+        .controls select {
+            padding: 8px 12px;
             border: 1px solid #ccc;
             border-radius: 4px;
-            background-color: #f8f8f8;
-            cursor: pointer;
+            font-size: 1rem;
+            flex-grow: 1; 
+            max-width: 250px; 
         }
-        .dataTables_paginate .paginate_button.current {
+        .controls input[type="search"] {
+            max-width: 350px; 
+        }
+        .controls select {
+             cursor: pointer;
+        }
+        .controls button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.2s ease-in-out;
+        }
+        .controls button:hover {
+            background-color: #0056b3;
+        }
+
+
+        /* Catalog Grid (Card View) */
+        #catalogContainer {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
+            gap: 20px; 
+            list-style: none; 
+            padding: 0; 
+            margin: 0; 
+        }
+
+        .catalog-item {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden; 
+            display: flex;
+            flex-direction: column; 
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; 
+        }
+        .catalog-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .item-header {
+            background-color: #e9ecef;
+            padding: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+        .item-header h3 {
+            margin: 0;
+            font-size: 1.2rem;
+            color: #2c3e50;
+        }
+
+        .item-body {
+            padding: 15px;
+            flex-grow: 1; 
+        }
+        .item-body p {
+            margin: 5px 0;
+            font-size: 0.9rem;
+            color: #666;
+            word-wrap: break-word; 
+        }
+        .item-body a {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .item-body a:hover {
+            text-decoration: underline;
+        }
+
+        .item-tags span {
+            display: inline-block;
+            background-color: #007bff;
+            color: white;
+            font-size: 0.75rem;
+            padding: 4px 8px;
+            border-radius: 12px;
+            margin-right: 5px;
+            margin-bottom: 5px;
+            white-space: nowrap; 
+        }
+
+        /* No results message */
+        .no-results {
+            grid-column: 1 / -1; 
+            text-align: center;
+            padding: 50px;
+            color: #666;
+            font-size: 1.2rem;
+        }
+
+        /* Pagination Controls CSS */
+        .pagination-controls {
+            text-align: center;
+            margin-top: 30px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px; /* Space between buttons/pages */
+        }
+
+        .pagination-controls button {
+            padding: 8px 15px;
+            border: 1px solid #007bff;
+            border-radius: 4px;
+            background-color: #fff;
+            color: #007bff;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background-color 0.2s, color 0.2s;
+        }
+        .pagination-controls button:hover:not(:disabled) {
+            background-color: #007bff;
+            color: white;
+        }
+        .pagination-controls button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background-color: #f2f2f2;
+            color: #ccc;
+            border-color: #ccc;
+        }
+
+        .pagination-page-numbers {
+            display: flex;
+            gap: 5px; /* Space between page number buttons */
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .pagination-page-numbers button {
+            min-width: 40px; /* Ensure buttons are a consistent size */
+        }
+        .pagination-page-numbers button.active-page {
             background-color: #007bff;
             color: white;
             border-color: #007bff;
         }
+        .pagination-info {
+            font-size: 1rem;
+            color: #555;
+            margin: 0 10px;
+            white-space: nowrap;
+        }
     </style>
 </head>
 <body>
-    <h1>📂 PLAY V4 alpha</h1>
+    <div class="container">
+        <h1>📂 E-library Play PPI Bursa</h1>
 
-    <table id="catalogTable" class="display" style="width:100%">
-        <thead>
-            <tr>
-                <th>File Name</th>
-                <th>MIME Type</th>
-                <th>Size (bytes)</th>
-                <th>Last Modified</th>
-                <th>Location on Catalog</th>
-                <th>Tags</th>
-                <th>Download Link</th>
-            </tr>
-        </thead>
-        <tbody>
-            </tbody>
-    </table>
+        <div id="loadingIndicator" style="text-align: center; padding: 50px; font-size: 1.2em; color: #555; display: none;">
+            Loading catalog data... Please wait.
+        </div>
+        <div class="controls">
+            <div>
+                <label for="searchBar">Search:</label>
+                <input type="search" id="searchBar" placeholder="File name, ID, path, tags...">
+            </div>
+            <div>
+                <label for="mimeTypeFilter">MIME Type:</label>
+                <select id="mimeTypeFilter">
+                    <option value="all">All Types</option>
+                    </select>
+            </div>
+            <div>
+                <label for="tagFilter">Tags:</label>
+                <select id="tagFilter">
+                    <option value="all">All Tags</option>
+                    </select>
+            </div>
+            <button type="button" id="resetFiltersButton">Reset Filters</button>
+        </div>
+
+        <div id="catalogContainer">
+            </div>
+
+        <div class="pagination-controls">
+            <button id="prevPageButton" disabled>Previous</button>
+            <div id="pageNumbersContainer" class="pagination-page-numbers">
+                </div>
+            <button id="nextPageButton" disabled>Next</button>
+        </div>
+    </div>
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdn.datatables.net/2.0.8/js/dataTables.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
