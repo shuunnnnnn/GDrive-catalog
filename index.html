@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Google Drive Catalog</title>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.0.8/css/dataTables.dataTables.min.css">
+    <style>
+        /* Basic custom styling */
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 20px; background-color: #f4f7f6; color: #333; }
+        h1 { color: #2c3e50; text-align: center; margin-bottom: 30px; }
+        #catalogTable_wrapper { /* Styles for DataTables container */
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        #catalogTable { 
+            width: 100%; 
+            border-collapse: collapse; 
+            margin-top: 20px; /* Space above the table itself */
+        }
+        #catalogTable th, #catalogTable td { 
+            border: 1px solid #e0e0e0; 
+            padding: 12px; 
+            text-align: left; 
+        }
+        #catalogTable th { 
+            background-color: #e9ecef; 
+            font-weight: bold; 
+            color: #555;
+            cursor: pointer; /* Indicate sortable */
+        }
+        #catalogTable td a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        #catalogTable td a:hover {
+            text-decoration: underline;
+        }
+        /* DataTables search input and pagination styling */
+        .dataTables_filter input { 
+            padding: 8px 12px; 
+            margin-left: 8px; 
+            border: 1px solid #ccc; 
+            border-radius: 4px; 
+            width: 250px; /* Adjust width */
+        }
+        .dataTables_paginate .paginate_button {
+            padding: 6px 12px;
+            margin: 0 4px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #f8f8f8;
+            cursor: pointer;
+        }
+        .dataTables_paginate .paginate_button.current {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <h1>📂 PLAY V4 alpha</h1>
+
+    <table id="catalogTable" class="display" style="width:100%">
+        <thead>
+            <tr>
+                <th>File Name</th>
+                <th>MIME Type</th>
+                <th>Size (bytes)</th>
+                <th>Last Modified</th>
+                <th>Location on Catalog</th>
+                <th>Tags</th>
+                <th>Download Link</th>
+            </tr>
+        </thead>
+        <tbody>
+            </tbody>
+    </table>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/2.0.8/js/dataTables.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
